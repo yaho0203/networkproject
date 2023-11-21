@@ -1,0 +1,18 @@
+1699805266591	Rename type 'Application'
+1699805271228	Rename type 'ApplicationTests'
+1699805356152	Rename type 'RemoteShellApp'
+1699805357720	Rename type 'RemoteShellAppTests'
+1699805398474	Rename package 'kr.ac.catholiccs.remote'
+1699805441921	Rename type 'RShellCommandApp'
+1699808159988	Move compilation unit
+1699811803150	Move compilation units
+1699811828775	Rename type 'RShellCmdApp'
+1699812233845	Rename package 'kr.ac.catholiccs.rshellcmd'
+1699812244632	Rename package 'kr.ac.catholiccs.rshellcmd.client'
+1699813574557	Rename package 'kr.ac.catholiccs.rshell'
+1699896986687	Delete elements
+1700206599849	Rename type 'Client'
+1700206725116	Rename field 'client'
+1700206779411	Rename type 'ClientDev'
+1700207097001	Rename local variable 'command'
+1700207119872	Rename local variable 'userCommand'

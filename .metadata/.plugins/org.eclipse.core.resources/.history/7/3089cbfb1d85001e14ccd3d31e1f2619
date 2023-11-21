@@ -1,0 +1,85 @@
+package kr.ac.catholiccs.rshell.client;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.shell.Availability;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellMethodAvailability;
+
+@ShellComponent
+public class CLI {
+	
+	// ---------- 개발 ---------------------------
+	@Value("${remote.dev.ip}")
+	private String ipDev;
+	
+	@Value("${remote.dev.port}")
+	private int portDev;
+
+	// ---------- 테스트 ---------------------------
+	@Value("${remote.test.ip}")
+	private String ipTest;
+	
+	@Value("${remote.test.port}")
+	private int portTest;
+	
+	// ---------- 운영 -----------------------------
+	@Value("${remote.prod.ip}")
+	private String ipProd;
+	
+	@Value("${remote.prod.port}")
+	private int portProd;
+	
+	@ShellMethod("개발서버")
+    public String dev(String... args) {
+        
+      for (String arg : args) {
+         System.out.println(arg);
+      }
+      
+      String userInputCommand = String.join(" ", args);
+      
+      String reqCommand = String.format("%06d", userInputCommand.getBytes().length) + userInputCommand; // 전문길이(6)+명령어
+ 
+      Client client = new Client(ipDev, portDev );
+      String resCommand = client.sendMessageToServer(reqCommand);
+        
+      return resCommand;
+    }
+
+	
+	@ShellMethod("테스트서버")
+    public String test(String... args) {
+        
+      for (String arg : args) {
+         System.out.println(arg);
+      }
+      
+      String userInputCommand = String.join(" ", args);
+      
+      String reqCommand = String.format("%06d", userInputCommand.getBytes().length) + userInputCommand; // 전문길이(6)+명령어
+ 
+      Client client = new Client(ipTest, portTest );
+      String resCommand = client.sendMessageToServer(reqCommand);
+        
+      return resCommand;
+    }
+	
+	@ShellMethod("운영서버")
+    public String prod(String... args) {
+        
+      for (String arg : args) {
+         System.out.println(arg);
+      }
+      
+      String userInputCommand = String.join(" ", args);
+      
+      String reqCommand = String.format("%06d", userInputCommand.getBytes().length) + userInputCommand; // 전문길이(6)+명령어
+ 
+      Client client = new Client(ipTest, portTest );
+      String resCommand = client.sendMessageToServer(reqCommand);
+        
+      return resCommand;
+    }
+}

@@ -1,0 +1,38 @@
+package kr.ac.catholiccs.rshell.client;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.Availability;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellMethodAvailability;
+
+@ShellComponent
+public class CLI {
+	
+    private final Client client;
+
+	@Autowired
+    public CLI(Client client) {
+        this.client = client;
+    }
+	
+	@ShellMethod("exec command")
+    public String exec(String... args) {
+        
+      for (String arg : args) {
+         System.out.println(arg);
+      }
+      
+      String command = String.join(" ", args);
+      
+      String reqMessage = String.format("%06d", command.getBytes().length) + command; // 전문길이(6)+명령어
+      
+//      reqMessage = reqMessage.replaceAll("(\\r|\\n)", ""); // CR/LF 제거
+      
+      System.out.println(reqMessage);
+      String resMessage = client.sendMessageToServer(reqMessage);
+        
+      return resMessage;
+    }
+
+}

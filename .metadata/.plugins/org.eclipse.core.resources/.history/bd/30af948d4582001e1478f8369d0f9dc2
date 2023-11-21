@@ -1,0 +1,40 @@
+package kr.ac.catholiccs.rshell.client;
+
+import java.net.InetSocketAddress;
+
+import org.apache.mina.core.future.ConnectFuture;
+import org.apache.mina.core.service.IoConnector;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
+
+public class MinaClient {
+    private static final String SERVER_IP = "127.0.0.1";
+    private static final int SERVER_PORT = 8888;
+
+    private final IoConnector connector;
+    private final MinaClientHandler handler;
+
+    public MinaClient() {
+        // Mina IoConnector 생성
+        connector = new NioSocketConnector();
+
+        // Mina Handler 설정
+        handler = new MinaClientHandler();
+        connector.setHandler(handler);
+    }
+
+    public void connectAndSendMessage(String message) {
+        try {
+            // 서버에 연결
+            ConnectFuture connectFuture = connector.connect(new InetSocketAddress(SERVER_IP, SERVER_PORT));
+            connectFuture.awaitUninterruptibly();
+
+            // 연결이 성공하면 세션을 가져와 메시지 전송
+            MinaClientHandler clientHandler = (MinaClientHandler) connector.getHandler();
+            clientHandler.sendMessage(message, connectFuture.getSession());
+
+            // 연결 종료
+            connector.dispose();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+}

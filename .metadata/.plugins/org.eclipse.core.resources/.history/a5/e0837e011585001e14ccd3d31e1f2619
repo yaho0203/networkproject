@@ -1,0 +1,5 @@
+package kr.ac.catholiccs.rshell.server;
+
+public class HistroryService {
+
+}

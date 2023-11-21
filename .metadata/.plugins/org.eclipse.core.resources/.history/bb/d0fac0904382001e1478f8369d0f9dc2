@@ -1,0 +1,149 @@
+package kr.ac.catholiccs.rshell.server.handler;
+
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import static kr.ac.catholiccs.RShellServerApp.logger;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
+
+/**
+ * socket服务器端处理类
+ * @author John Doe
+ * @since 2018/04/28 12:14:18
+ *
+ */
+public class ServerHandler extends IoHandlerAdapter {
+
+	@Override
+	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+		logger.error("exceptionCaught :" + session.getRemoteAddress().toString() + " : " + cause.toString());
+
+		session.write("exceptionCaught");
+		session.closeNow();
+	}
+
+	@Override
+	public void sessionCreated(IoSession session) throws Exception {
+		logger.info("sessionCreated : " + session.getRemoteAddress().toString());
+	}
+
+	@Override
+	public void sessionOpened(IoSession session) throws Exception {
+		logger.info("sessionOpened: " + session.getRemoteAddress().toString());
+	}
+
+	@Override
+	public void messageReceived(IoSession session, Object message) throws Exception {
+		logger.info("messageReceived :" + String.valueOf(message));
+		String text = String.valueOf(message);
+
+		String resMessage = executeCommand(text, session);
+		
+//	    String resMessage = String.format("%06d", result.getBytes().length) + result; // 전문길이(6)+명령어
+		  
+		  
+		session.write(resMessage);
+
+	}
+
+	private String executeCommand(String command, IoSession session) throws InterruptedException, ExecutionException {
+		String result = "";
+        StringBuilder output = new StringBuilder();
+        
+        
+     // 운영체제 확인
+        String os = System.getProperty("os.name").toLowerCase();
+        
+        
+        if (os.contains("win")) {
+        	result = executeCommandOnWindows(command);
+        } else { // linux
+        	result = executeCommandOnLinux(command);
+        }
+        
+
+        return result+"\r\n";
+	}
+	
+	
+
+    // Windows에서 명령어 실행
+    private String executeCommandOnWindows(String command) {
+        return executeCommand(new String[]{"cmd", "/c", command});
+    }
+
+    // Linux에서 명령어 실행
+    private String  executeCommandOnLinux(String command) {
+        return executeCommand(new String[]{"/bin/bash", "-c", command});
+    }
+
+    private String executeCommand(String[] command) {
+        StringBuilder result = new StringBuilder();
+        try {
+            
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+//            processBuilder.redirectErrorStream(true); // 에러 스트림을 표준 출력 스트림으로 합침
+//            Map<String, String> environment = processBuilder.environment();
+//            environment.put("LANG", "ko_KR.UTF-8");
+            Process process = processBuilder.start();
+            
+
+            // 명령어 실행 결과를 읽어오기 위해 InputStream 사용
+            InputStream inputStream = process.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_16);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+
+            // 명령어 실행 결과를 읽어와서 StringBuilder에 추가
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.append(line).append("\n");
+            }
+System.err.println(result);
+            // 프로세스 종료까지 대기
+            int exitCode = process.waitFor();
+
+            // 프로세스 종료 코드 출력
+            System.out.println("Exit Code: " + exitCode);
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // EUC-KR에서 UTF-8로 변환하여 결과 반환
+        return result.toString();
+    }
+    
+
+	@Override
+	public void messageSent(IoSession session, Object message) throws Exception {
+		logger.info("messageSent : " + message.toString());
+	}
+
+	@Override
+	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
+		if (status == IdleStatus.READER_IDLE) {
+			logger.info("READER_IDLE");
+			session.closeNow();
+		} else if (status == IdleStatus.BOTH_IDLE) {
+			logger.info("BOTH_IDLE");
+			session.closeNow();
+		}
+	}
+
+	@Override
+	public void sessionClosed(IoSession session) throws Exception {
+		logger.info("sessionClosed : " + session.getRemoteAddress().toString());
+		int size = session.getService().getManagedSessions().values().size();
+		logger.info("connected session " + size);
+	}
+
+}

@@ -1,0 +1,11 @@
+remote.dev.ip = 172.21.10.103
+#remote.ip = 127.0.0.1
+remote.dev.port = 10001
+
+remote.test.ip = 172.21.10.103
+#remote.test = 127.0.0.1
+remote.test.port = 10002
+
+remote.prod.ip = 172.21.10.103
+#remote.prod = 127.0.0.1
+remote.prod.port = 10003

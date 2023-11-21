@@ -1,0 +1,37 @@
+package kr.ac.catholiccs.rshell.client;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.shell.Availability;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellMethodAvailability;
+
+@ShellComponent
+public class CLI {
+	
+	@Value("${remote.dev.ip}")
+	private String ipDev;
+	
+	@Value("${remote.dev.port}")
+	private int portDev;
+
+
+	@ShellMethod("dev command")
+    public String dev(String... args) {
+        
+      for (String arg : args) {
+         System.out.println(arg);
+      }
+      
+      String userInputCommand = String.join(" ", args);
+      
+      String reqCommand = String.format("%06d", userInputCommand.getBytes().length) + userInputCommand; // 전문길이(6)+명령어
+ 
+      Client client = new Client(ipDev, portDev );
+      String resCommand = client.sendMessageToServer(reqCommand);
+        
+      return resCommand;
+    }
+
+}

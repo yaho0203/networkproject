@@ -1,0 +1,39 @@
+package kr.ac.catholiccs.rshell.server;
+
+import java.util.Iterator;
+
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import kr.ac.catholiccs.collections.FifoFixedSizeQueue;
+
+@Component
+@Scope(value=ConfigurableBeanFactory.SCOPE_SINGLETON)
+public class HistroryService {
+	
+	FifoFixedSizeQueue<String> queue = new FifoFixedSizeQueue<>(10);
+	
+	public void add(String command) {
+		queue.add(command);
+	}
+	
+//	public String executeHistory(int number) {
+//		
+//		
+//	}
+	
+	public String getHistory() {
+		StringBuilder sb = new StringBuilder();
+		Iterator<String> it = queue.iterator();
+		int seq = 1;
+		
+		while( it.hasNext() ) {
+			String historyCommamd = String.format("%s. %s\r", seq, it.next());
+			sb.append(historyCommamd );
+		}
+		
+		return sb.toString();
+	}
+
+}

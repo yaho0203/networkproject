@@ -1,0 +1,52 @@
+package kr.ac.catholiccs.rshell.client;
+
+import java.nio.charset.StandardCharsets;
+
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IoSession;
+
+import org.apache.mina.core.future.WriteFuture;
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IoSession;
+
+import java.nio.charset.StandardCharsets;
+
+public class MinaClientHandler extends IoHandlerAdapter {
+    private IoSession session;
+    private String response;
+
+    public void setSession(IoSession session) {
+        this.session = session;
+    }
+
+    public void sendMessage(String message) {
+        // 서버에 메시지 전송
+        if (session != null && session.isConnected()) {
+            WriteFuture future = session.write(message.getBytes(StandardCharsets.UTF_8));
+            future.awaitUninterruptibly();
+            if (!future.isWritten()) {
+                System.err.println("Failed to send message");
+            }
+        } else {
+            System.err.println("Not connected to the server");
+        }
+    }
+
+    public void receiveMessage() {
+        // 서버에서의 응답 수신
+        // 서버에서의 메시지 처리 로직을 추가하면 됩니다.
+    }
+
+    @Override
+    public void messageReceived(IoSession session, Object message) {
+        // 서버에서 메시지를 받았을 때의 동작 정의
+        byte[] messageBytes = (byte[]) message;
+        this.response = new String(messageBytes, StandardCharsets.UTF_8);
+        System.out.println("Received from server: " + this.response);
+    }
+    
+    
+    public String getResponse() {
+        return response;
+    }
+}

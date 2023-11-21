@@ -1,0 +1,14 @@
+1699812177218	Rename package 'kr.ac.catholiccs.remote'
+1699812266332	Rename package 'kr.ac.catholiccs'
+1699812287629	Rename package 'kr.ac.catholiccs.socket'
+1699812894490	Rename method 'analyzeData'
+1699813052486	Rename method 'osCommandExecutor'
+1699813534494	Rename package 'kr.ac.catholiccs.rshell'
+1699813595965	Rename type 'RShellServerAppApplication'
+1699813647664	Rename package 'kr.ac.catholiccs.server'
+1699813661425	Rename package 'kr.ac.catholiccs.server.handler'
+1699887368563	Delete elements
+1699887395519	Delete element
+1700202461189	Move compilation unit
+1700203599061	Rename type 'HistroryService'
+1700203885721	Rename local variable 'resMessage'
